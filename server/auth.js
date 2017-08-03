@@ -90,7 +90,7 @@ function login(req, res, next) {
                 if (match) {
                     createAccessToken(user)
                         .then(function(token) {
-                            return res.send({'user':{'email': user.email, 'firstName': user.firstname, 'lastName': user.lastname}, 'token': token});
+                            return res.send({'user':{'email': user.email, 'firstname': user.firstname, 'lastname': user.lastname}, 'token': token});
                         })
                         .catch(function(err) {
                             return next(err);    
