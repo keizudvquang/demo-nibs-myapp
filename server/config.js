@@ -17,7 +17,15 @@ module.exports = {
 
         // SFDC user used to make API calls from Node server
         userName: process.env.INTEGRATION_USER_NAME,
-        password: process.env.INTEGRATION_USER_PASSWORD
+        password: process.env.INTEGRATION_USER_PASSWORD,
+
+        // Line app
+        lineChannelId: process.env.LINE_CHANNEL_ID,
+        lineChannelSecret: process.env.LINE_CHANNEL_SECRET,
+        lineCallbackURL: process.env.LINE_CALLBACK_URL,
+        lineLoginURL: process.env.LINE_LOGIN_URL,
+        lineGetTokenURL: process.env.LINE_GET_TOKEN_URL,
+        lineGetProfileURL: process.env.LINE_GET_PROFILE_URL
     },
 
     // Used for picture upload (user profile and gallery)

@@ -1,4 +1,4 @@
-angular.module('nibs.auth', ['openfb', 'nibs.config'])
+angular.module('nibs.auth', ['ngCookies', 'nibs.config'])
 
     /*
      * Routes
@@ -36,14 +36,12 @@ angular.module('nibs.auth', ['openfb', 'nibs.config'])
                     }
                 }
             })
-
     })
 
     /*
      * REST Resources
      */
     .factory('Auth', function ($http, $window, $rootScope) {
-
         return {
             login: function (user) {
                 return $http.post($rootScope.server.url + '/login', user)
@@ -67,28 +65,8 @@ angular.module('nibs.auth', ['openfb', 'nibs.config'])
 
                     });
             },
-            fblogin: function (fbUser) {
-                console.log(JSON.stringify(fbUser));
-                return $http.post($rootScope.server.url + '/fblogin', {user:fbUser, token: $window.localStorage['fbtoken']})
-                    .success(function (data) {
-                        $rootScope.user = data.user;
-                        $window.localStorage.user = JSON.stringify(data.user);
-                        $window.localStorage.token = data.token;
-
-                        console.log('Subscribing for Push as ' + data.user.email);
-                        if (typeof(ETPush) != "undefined") {
-                            ETPush.setSubscriberKey(
-                                function() {
-                                    console.log('setSubscriberKey: success');
-                                },
-                                function(error) {
-                                    alert('Error setting Push Notification subscriber');
-                                },
-                                data.user.email
-                            );
-                        }
-
-                    });
+            getConfig: function() {
+                return $http.get($rootScope.server.url + '/getConfig')
             },
             logout: function () {
                 $rootScope.user = undefined;
@@ -106,8 +84,7 @@ angular.module('nibs.auth', ['openfb', 'nibs.config'])
     /*
      * Controllers
      */
-    .controller('LoginCtrl', function ($scope, $rootScope, $state, $window, $location, $ionicViewService, $ionicPopup, $ionicModal, Auth, OpenFB) {
-
+    .controller('LoginCtrl', function ($scope, $rootScope, $state, $window, $ionicViewService, $ionicPopup, $ionicModal, $cookies, Auth) {
         $ionicModal.fromTemplateUrl('templates/server-url-setting.html', {
             scope: $scope,
             animation: 'slide-in-up'
@@ -138,31 +115,19 @@ angular.module('nibs.auth', ['openfb', 'nibs.config'])
                 });
         };
 
-        $scope.facebookLogin = function () {
-
-            OpenFB.login('email, publish_actions').then(
-                function () {
-                    OpenFB.get('/me', {fields: 'id,first_name,last_name,email,picture,birthday,gender'})
-                        .success(function (fbUser) {
-                            Auth.fblogin(fbUser)
-                                .success(function (data) {
-                                    $state.go("app.profile");
-                                    setTimeout(function () {
-                                        $ionicViewService.clearHistory();
-                                    });
-                                })
-                                .error(function (err) {
-                                    console.log(JSON.stringify(err));
-                                    $ionicPopup.alert({title: 'Oops', content: err});
-                                })
-                        })
-                        .error(function () {
-                            $ionicPopup.alert({title: 'Oops', content: "The Facebook login failed"});
-                        });
-                },
-                function () {
-                    $ionicPopup.alert({title: 'Oops', content: "The Facebook login failed"});
-                });
+        $scope.lineLogin = function() {
+            Auth.getConfig()
+                .success(function(data) {
+                    const url = data.lineLoginURL 
+                              + '?client_id=' + data.lineChannelId 
+                              + '&redirect_uri=' + data.lineCallbackURL 
+                              + '&state=' + $cookies._csrf 
+                              + '&response_type=code';
+                    loginWindow = $window.location.assign(url)
+                })
+                .error(function(err) {
+                    $ionicPopup.alert({title: 'Oops', content: err});
+                })
         };
 
     })
@@ -189,31 +154,4 @@ angular.module('nibs.auth', ['openfb', 'nibs.config'])
                     $state.go("app.login");
                 });
         };
-
-        $scope.facebookLogin = function () {
-
-            OpenFB.login('email, publish_actions').then(
-                function () {
-                    OpenFB.get('/me', {fields: 'id,first_name,last_name,email,picture,birthday,gender'})
-                        .success(function (fbUser) {
-                            Auth.fblogin(fbUser)
-                                .success(function (data) {
-                                    $state.go("app.profile");
-                                    setTimeout(function () {
-                                        $ionicViewService.clearHistory();
-                                    });
-                                })
-                                .error(function (err) {
-                                    $ionicPopup.alert({title: 'Oops', content: err});
-                                })
-                        })
-                        .error(function () {
-                            $ionicPopup.alert({title: 'Oops', content: "The Facebook login failed"});
-                        });
-                },
-                function () {
-                    $ionicPopup.alert({title: 'Oops', content: "The Facebook login failed"});
-                });
-        };
-
     });

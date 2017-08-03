@@ -1,7 +1,7 @@
 var db = require('./pghelper'),
     activities = require('./activities'),
     winston = require('winston');
-
+    
 /**
  * Get user profile
  * @param req

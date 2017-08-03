@@ -1,11 +1,13 @@
 var express = require('express'),
-    bodyParser     = require('body-parser'),
+    bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
     compression = require('compression'),
     http = require('http'),
     path = require('path'),
     winston = require('winston'),
     sqlinit = require('./server/sqlinit'),
+    cookieParser = require('cookie-parser'),
+    csrf = require('csurf'),
 
     // App modules
     offers = require('./server/offers'),
@@ -18,30 +20,62 @@ var express = require('express'),
     pictures = require('./server/pictures'),
     auth = require('./server/auth'),
     facebook = require('./server/facebook'),
+    line = require('./server/line'),
     s3signing = require('./server/s3signing'),
     activities = require('./server/activities'),
+    config = require('./server/config'),
     app = express();
 
 app.set('port', process.env.PORT || 5000);
-
 app.use(compression());
 app.use(bodyParser({
     uploadDir: __dirname + '/uploads',
     keepExtensions: true
 }));
 app.use(methodOverride());
-
 app.use(express.static(path.join(__dirname, './client')));
-
 app.use(function(err, req, res, next) {
     console.log(err.stack);
     res.send(500, err.message);
 });
 
+// Ignore 3 route
+var api = createApiRouter()
+app.use('/lineAPI', api)
+
+function createApiRouter () {
+  var router = new express.Router()
+  router.post('/getAccessTokenLINE', line.getAccessToken)
+  router.post('/getUserProfileLINE', line.getUserProfile)
+  router.post('/loginLINE', line.login)
+  return router
+}
+
+app.use(cookieParser('secretPassword'))
+app.use(csrf({ cookie: true }))
+app.use(function(req, res, next) {
+    res.cookie('XSRF-TOKEN', req.csrfToken())
+    return next()
+});
+
+app.use(function (err, req, res, next) {
+    if (err.code !== 'EBADCSRFTOKEN') return next(err) 
+
+    res.status(403)
+    res.send("You don't have permission to access.")
+})
+
+app.get('/getConfig', function(req, res) {
+    var line = new Object()
+    line.lineChannelId   = config.api.lineChannelId
+    line.lineCallbackURL = config.api.lineCallbackURL
+    line.lineLoginURL    = config.api.lineLoginURL
+    res.send(line)
+})
+
 app.post('/login', auth.login);
 app.post('/logout', auth.validateToken, auth.logout);
 app.post('/signup', auth.signup);
-app.post('/fblogin', facebook.login);
 
 app.get('/users/me', auth.validateToken, users.getProfile);
 app.put('/users/me', auth.validateToken, users.updateProfile);

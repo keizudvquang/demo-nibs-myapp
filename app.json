@@ -30,6 +30,30 @@
         "PRODUCT_FAMILY": {
             "description": "input product family",
             "value": "Nibs"
+        },
+        "LINE_CHANNEL_ID": {
+            "description": "LINE channel id",
+            "value": ""
+        },
+        "LINE_CHANNEL_SECRET": {
+            "description": "LINE channel secret",
+            "value": ""
+        },
+        "LINE_LOGIN_URL": {
+            "description": "LINE login url",
+            "value": ""
+        },
+        "LINE_GET_TOKEN_URL": {
+            "description": "LINE get token url",
+            "value": ""
+        },
+        "LINE_GET_PROFILE_URL": {
+            "description": "LINE get user profile url",
+            "value": ""
+        },
+        "LINE_CALLBACK_URL": {
+            "description": "LINE call back url",
+            "value": ""
         }
     }
 }

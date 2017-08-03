@@ -1,21 +1,15 @@
-var app = angular.module('nibs', ['ionic', 'openfb', 'nibs.config', 'nibs.profile', 'nibs.auth', 'nibs.product', 'nibs.offer', 'nibs.store-locator', 'nibs.gallery', 'nibs.settings', 'nibs.case'])
+var app = angular.module('nibs', ['ionic', 'nibs.config', 'nibs.profile', 'nibs.auth', 'nibs.product', 'nibs.offer', 'nibs.store-locator', 'nibs.gallery', 'nibs.settings', 'nibs.case'])
 
-    .run(function ($window, $location, $rootScope, $state, $ionicPlatform, $http, OpenFB, FB_APP_ID, SERVER_URL) {
+    .run(function ($window, $location, $rootScope, $state, $ionicPlatform, $http, SERVER_URL) {
 
         var user = JSON.parse($window.localStorage.getItem('user'));
-
         $rootScope.user = user;
-
         $rootScope.server = {url: SERVER_URL || location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '')};
-
-        // Intialize OpenFB Facebook library
-        OpenFB.init(FB_APP_ID, $window.localStorage);
 
         $ionicPlatform.ready(function() {
             if(window.StatusBar) {
                 StatusBar.styleDefault();
             }
-
         });
 
         // Re-route to welcome street if we don't have an authenticated token
@@ -24,10 +18,16 @@ var app = angular.module('nibs', ['ionic', 'openfb', 'nibs.config', 'nibs.profil
                 console.log('Aborting state ' + toState.name + ': No token');
                 $location.path('/app/welcome');
                 event.preventDefault();
+                $state.go('app.login');
             }
         });
 
-        $state.go('app.profile');
+        if ($window.localStorage.getItem('token')) {
+            $state.go('app.profile');
+        } else {
+            $state.go('app.welcome');
+        }
+        
     })
 
     .config(function ($stateProvider, $urlRouterProvider) {
@@ -82,7 +82,6 @@ var app = angular.module('nibs', ['ionic', 'openfb', 'nibs.config', 'nibs.profil
                     $location.path('/app/welcome');
                 } else if (response && response.status !== 404) {
                     console.log(response);
-                    // alert(response.data);
                 }
                 return $q.reject(response);
             }
