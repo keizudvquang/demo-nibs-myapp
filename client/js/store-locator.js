@@ -29,6 +29,9 @@ angular.module('nibs.store-locator', [])
     //Controllers
     .controller('StoreLocatorCtrl', function ($scope, Store) {
 
+        $scope.numLimit = 10;
+        $scope.paramOrder = '+name';
+
         var map,
             currentPosMarker,
 
@@ -43,6 +46,7 @@ angular.module('nibs.store-locator', [])
             });
 
         Store.all().success(function(stores) {
+            $scope.allStores = stores;
             $scope.stores = stores;
             for (var i=0; i<stores.length; i++) {
                 var store = stores[i];
@@ -67,6 +71,24 @@ angular.module('nibs.store-locator', [])
             map.on('locationfound', onLocationFound);
             $scope.getLocation();
 
+            map.on('moveend', function(e) {
+                var listNewStores = [];
+                map.eachLayer(function(layer) {
+                    if(layer instanceof L.Marker) {
+                        if(map.getBounds().contains(layer.getLatLng())) {
+                            for (var i = 0; i < $scope.allStores.length; i++) {
+                                var store = $scope.allStores[i];
+                                if (layer._latlng.lat == store.latitude && layer._latlng.lng == store.longitude) {
+                                    listNewStores.push(store);
+                                }
+                            }
+                        }
+                    }
+                });
+                $scope.$apply(function() {
+                    $scope.stores = listNewStores;
+                });
+            });
         });
 
         $scope.showLocation = function(position) {
