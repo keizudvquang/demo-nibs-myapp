@@ -42,8 +42,10 @@ angular.module('nibs.offer', ['openfb', 'nibs.status', 'nibs.activity', 'nibs.wa
             all: function(offset, limit) {
                 return $http.get($rootScope.server.url + '/offers/' + offset + '/' + limit);
             },
-            get: function(offerId) {
-                return $http.get($rootScope.server.url + '/offers/' + offerId);
+            get: function(offerId, contactId) {
+                return $http.post($rootScope.server.url + '/offers/' + offerId, {
+                    contactId: contactId
+                });
             }
         };
     })
@@ -76,9 +78,9 @@ angular.module('nibs.offer', ['openfb', 'nibs.status', 'nibs.activity', 'nibs.wa
         }
     })
 
-    .controller('OfferDetailCtrl', function ($rootScope, $scope, $state, $ionicPopup, $stateParams, Offer, OpenFB, WalletItem, Activity, Status) {
+    .controller('OfferDetailCtrl', function ($window, $rootScope, $scope, $state, $ionicPopup, $stateParams, Offer, OpenFB, WalletItem, Activity, Status) {
 
-        Offer.get($stateParams.offerId).success(function(offer) {
+        Offer.get($stateParams.offerId, JSON.parse($window.localStorage.user).sfid).success(function(offer) {
             $scope.offer = offer;
         });
 
@@ -120,7 +122,7 @@ angular.module('nibs.offer', ['openfb', 'nibs.status', 'nibs.activity', 'nibs.wa
         $scope.saveToWallet = function () {
             WalletItem.create({offerId: $scope.offer.id}).success(function(status) {
                 Status.show('Saved to your wallet!');
-                Activity.create({type: "Saved to Wallet", points: 1000, offerId: $scope.offer.sfid, name: $scope.offer.name, image: $scope.offer.image})
+                Activity.create({type: "Saved to Wallet", points: 1000, offerId: $scope.offer.sfid, name: $scope.offer.name, image: $scope.offer.image, qrcode: $scope.offer.qrcode})
                     .success(function(status) {
                         Status.checkStatus(status);
                     });
@@ -128,7 +130,7 @@ angular.module('nibs.offer', ['openfb', 'nibs.status', 'nibs.activity', 'nibs.wa
         };
 
         $scope.redeem = function () {
-            Activity.create({type: "Redeemed Offer", points: 1000, offerId: $scope.offer.sfid, name: $scope.offer.name, image: $scope.offer.image})
+            Activity.create({type: "Redeemed Offer", points: 1000, offerId: $scope.offer.sfid, name: $scope.offer.name, image: $scope.offer.image, qrcode: $scope.offer.qrcode})
                 .success(function(status) {
                     Status.checkStatus(status);
                 });

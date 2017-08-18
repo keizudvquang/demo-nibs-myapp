@@ -55,14 +55,14 @@ function login(req, res, next) {
     function createAndSendToken(user) {
         auth.createAccessToken(user)
             .then(function(token) {
-                var response = {'user':{'email': user.email, 'firstName': user.firstname, 'lastName': user.lastname}, 'token': token};
+                var response = {'user':{'email': user.email, 'firstname': user.firstname, 'lastname': user.lastname}, 'token': token};
                 winston.info(JSON.stringify(response));
                 return res.send(response);
             })
             .catch(next);
     }
 
-    db.query('SELECT id, firstName, lastName, email, loyaltyid__c as externalUserId FROM salesforce.contact WHERE lineuserid__c = $1', [lineUser.userId], true)
+    db.query('SELECT id, firstname, lastname, email, loyaltyid__c as externalUserId FROM salesforce.contact WHERE lineuserid__c = $1', [lineUser.userId], true)
         .then(function (user) {
             if (user) {
                 return createAndSendToken(user);

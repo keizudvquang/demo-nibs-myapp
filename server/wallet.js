@@ -1,6 +1,6 @@
 var db = require('./pghelper'),
     winston = require('winston');
-
+var QRCode = require('qrcode')
 /**
  * Add a new offer to the user's wallet
  * @param req
@@ -65,10 +65,25 @@ function getItems(req, res, next) {
     var offset = req.params.offset
     var limit = req.params.limit
     var userId = req.userId;
-    db.query("SELECT id, name, startDate, endDate, description, image__c AS image, campaignPage__c AS campaignPage, publishDate__c AS publishDate FROM wallet, salesforce.campaign WHERE offerId = id AND userId=$1 AND type='Offer' AND status='In Progress' AND IsActive = true ORDER BY publishDate DESC, name DESC, id DESC OFFSET $2 LIMIT $3",
+    var contactId = req.body.contactId;
+
+    db.query("SELECT id, name, startDate, endDate, description, serialid__c AS serialid, image__c AS image, campaignPage__c AS campaignPage, publishDate__c AS publishDate FROM wallet, salesforce.campaign WHERE offerId = id AND userId=$1 AND type='Offer' AND status='In Progress' AND IsActive = true ORDER BY publishDate DESC, name DESC, id DESC OFFSET $2 LIMIT $3",
             [userId, offset, limit])
         .then(function (offers) {
-            return res.send(JSON.stringify(offers));
+            // Create QR Code
+            if (offers.length == 0) {
+                return res.send(JSON.stringify(offers));
+            }
+            for (let i = 0; i < offers.length; i++) {
+                let convertString = contactId + offers[i].serialid
+                QRCode.toDataURL(convertString, function (err, url) {
+                    console.log(url)
+                    offers[i].qrcode = url
+                    if (i == offers.length - 1) {
+                        return res.send(JSON.stringify(offers));
+                    }
+                })
+            }
         })
         .catch(next);
 }

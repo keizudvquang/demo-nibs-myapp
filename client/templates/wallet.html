@@ -12,7 +12,7 @@
                 <p>期限　 {{offer.enddate | date:'yyyy年M月d日（EEE）'}}</p>
             </div>
             <div class="item item-body">
-                <img class="full-image" ng-src="img/qrcode.svg">
+                <img class="full-image" ng-src="{{offer.qrcode}}">
             </div>
             <div class="item tabs tabs-secondary tabs-icon-left">
                 <a class="tab-item" ng-click="deleteItem(offer)">

@@ -1,4 +1,4 @@
-var app = angular.module('nibs', ['ionic', 'nibs.config', 'nibs.profile', 'nibs.auth', 'nibs.product', 'nibs.offer', 'nibs.store-locator', 'nibs.gallery', 'nibs.settings', 'nibs.case'])
+var app = angular.module('nibs', ['ionic', 'nibs.config', 'nibs.profile', 'nibs.auth', 'nibs.product', 'nibs.offer', 'nibs.store-locator', 'nibs.faq', 'nibs.gallery', 'nibs.settings', 'nibs.case'])
 
     .run(function ($window, $location, $rootScope, $state, $ionicPlatform, $http, SERVER_URL) {
 

@@ -17,6 +17,7 @@ var express = require('express'),
     wallet = require('./server/wallet'),
     wishlist = require('./server/wishlist'),
     stores = require('./server/stores'),
+    faq = require('./server/faq'),
     pictures = require('./server/pictures'),
     auth = require('./server/auth'),
     facebook = require('./server/facebook'),
@@ -51,6 +52,7 @@ function createApiRouter () {
   return router
 }
 
+// csrf
 app.use(cookieParser('secretPassword'))
 app.use(csrf({ cookie: true }))
 app.use(function(req, res, next) {
@@ -81,14 +83,17 @@ app.get('/users/me', auth.validateToken, users.getProfile);
 app.put('/users/me', auth.validateToken, users.updateProfile);
 
 app.get('/offers/:offset/:limit', auth.validateToken, offers.getAll);
-app.get('/offers/:id', offers.getById);
+app.post('/offers/:id', auth.validateToken, offers.getById);
 
 app.get('/products/:offset/:limit', auth.validateToken, products.getAll);
 app.get('/products/:id', auth.validateToken, products.getById);
 
 app.get('/stores', auth.validateToken, stores.findAll);
 
-app.get('/wallet/:offset/:limit', auth.validateToken, wallet.getItems);
+app.get('/faq/:offset/:limit', auth.validateToken, faq.getAll)
+app.get('/faq/:id', auth.validateToken, faq.getById)
+
+app.post('/wallet/:offset/:limit', auth.validateToken, wallet.getItems);
 app.post('/wallet', auth.validateToken, wallet.addItem);
 app.delete('/wallet/:id', auth.validateToken, wallet.deleteItem);
 
