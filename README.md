@@ -3,13 +3,7 @@
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
 
 
-## XV—š—ð
+## ã‚±ã‚¤ã‚ºãƒ‡ãƒ¢ã‚¢ã‚»ãƒƒãƒˆå…¨ä½“æ§‹æˆå›³
 
-Updated: 2017/06/27
-
-    ¡Œã’Ç‰Á—\’è‚Ì‹@”\i¦IssuesŽQÆj‚É‡‚í‚¹‚Äƒƒjƒ…[‚ð’Ç‰Á‚µ‚Ü‚µ‚½B
-
-Updated: 2017/06/22
-
-    ƒfƒ‚ƒAƒZƒbƒgŠJ”­ŠÂ‹«\’z‚Æ‚µ‚ÄNibsƒeƒ“ƒvƒŒ[ƒgi‰pŒê”Åj‚Ì“ú–{Œê‰»‚¨‚æ‚ÑSalesforce Developer‘gD‚Æ‚Ì˜AŒg‚ðŠm”F‚µ‚Ü‚µ‚½B
+![ã‚±ã‚¤ã‚ºãƒ‡ãƒ¢ã‚¢ã‚»ãƒƒãƒˆå…¨ä½“æ§‹æˆå›³](http://res.cloudinary.com/hmsy6tl9w/image/upload/v1503044700/keizu-demo-app_configuration_oigwmj.png)
 
