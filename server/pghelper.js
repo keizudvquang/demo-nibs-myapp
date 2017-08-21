@@ -1,8 +1,12 @@
-var pg = require('pg'),
-    config = require('./config'),
+var config = require('./config'),
     Q = require('q'),
     winston = require('winston'),
     databaseURL = config.databaseURL;
+
+const { Pool} = require('pg')
+const pool = new Pool({
+  connectionString: databaseURL
+})
 
 /**
  * Utility function to execute a SQL query against a Postgres database
@@ -19,7 +23,7 @@ exports.query = function (sql, values, singleItem, dontLog) {
 
     var deferred = Q.defer();
 
-    pg.connect(databaseURL, function (err, conn, done) {
+    pool.connect(function (err, conn, done) {
         if (err) return deferred.reject(err);
         try {
             conn.query(sql, values, function (err, result) {
@@ -42,5 +46,5 @@ exports.query = function (sql, values, singleItem, dontLog) {
 };
 
 exports.close = function() {
-    pg.end();
+    pool.end();
 }
