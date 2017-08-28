@@ -25,7 +25,7 @@
         },
         "OAUTH_REDIRECT_URL": {
             "description": "OAuth redirect-url for Your Connected Apps",
-            "value": ""
+            "value": "https://login.salesforce.com/"
         },
         "PRODUCT_FAMILY": {
             "description": "input product family",
@@ -41,19 +41,27 @@
         },
         "LINE_LOGIN_URL": {
             "description": "LINE login url",
-            "value": ""
+            "value": "https://access.line.me/dialog/oauth/weblogin"
         },
         "LINE_GET_TOKEN_URL": {
             "description": "LINE get token url",
-            "value": ""
+            "value": "https://api.line.me/v2/oauth/accessToken"
         },
         "LINE_GET_PROFILE_URL": {
             "description": "LINE get user profile url",
-            "value": ""
+            "value": "https://api.line.me/v2/profile"
         },
         "LINE_CALLBACK_URL": {
             "description": "LINE call back url",
             "value": ""
+        },
+        "SFORCE_GET_FAQ_URL": {
+            "description": "Salesforce REST API Query Endpoint",
+            "value": "/services/data/v40.0/query"
+        },
+        "SFORCE_GET_TOKEN_URL": {
+            "description": "Salesforce OAUTH2 get Token",
+            "value": "https://login.salesforce.com/services/oauth2/token"
         }
     }
 }
