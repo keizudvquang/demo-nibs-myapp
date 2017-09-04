@@ -1,6 +1,6 @@
 angular.module('nibs.status', [])
 
-    .factory('Status', function ($rootScope, $ionicPopup, STATUS_LABELS) {
+    .factory('Status', function ($window, $rootScope, $ionicPopup, STATUS_LABELS) {
 
         function show(message) {
             var el = angular.element('<div class="notification">' + message + '</div>');
@@ -13,6 +13,10 @@ angular.module('nibs.status', [])
         function checkStatus(data) {
             if (data.originalStatus !== data.newStatus) {
                 $rootScope.user.status = data.newStatus;
+                var userFromLocalStorage = JSON.parse($window.localStorage.getItem("user"));
+                userFromLocalStorage.status = data.newStatus;
+                $window.localStorage.setItem("user",JSON.stringify(userFromLocalStorage));
+                
                 $ionicPopup.show({
                     title: 'おめでとうございます！<br>' + $rootScope.user.lastname + '　' + $rootScope.user.firstname + 'さん！',
                     template:

@@ -1,4 +1,4 @@
-angular.module('nibs.wallet', [])
+angular.module('nibs.wallet', ['nibs.status'])
 
     // Routes
     .config(function ($stateProvider) {
@@ -14,7 +14,6 @@ angular.module('nibs.wallet', [])
                     }
                 }
             })
-
     })
 
     // Services
@@ -28,35 +27,38 @@ angular.module('nibs.wallet', [])
             create: function(walletItem) {
                 return $http.post($rootScope.server.url + '/wallet', walletItem);
             },
-            del: function(offerId) {
-                return $http.delete($rootScope.server.url + '/wallet/' + offerId);
+            del: function(offerId, offerSFID, points) {
+                return $http.delete($rootScope.server.url + '/wallet/' + offerId, {
+                    data : {offerSFID: offerSFID, points: points}, headers: {"Content-Type": "application/json;charset=utf-8"}
+                });
             }
         };
     })
 
     //Controllers
-    .controller('WalletCtrl', function ($window, $scope, WalletItem) {
-        const firstLoadOffset = 0
-        const firstLoadLimit  = 10
+    .controller('WalletCtrl', function ($window, $scope, WalletItem, Status) {
+        const firstLoadOffset = 0;
+        const firstLoadLimit  = 10;
 
         $scope.deleteItem = function(offer) {
-            WalletItem.del(offer.id).success(function() {
-                all();
+            WalletItem.del(offer.id, offer.sfid, 1000).success(function(dataStatus) {
+                $scope.walletItems.splice($scope.walletItems.indexOf(offer), 1);
+                Status.checkStatus(dataStatus);
             });
         };
 
-        $scope.walletItems = []
+        $scope.walletItems = [];
         $scope.noMoreItems = false;
         $scope.loadItem = function() {
-            var offset = $scope.walletItems.length == 0 ? firstLoadOffset : $scope.walletItems.length
-            var limit  = $scope.walletItems.length == 0 ? firstLoadLimit : 5
+            var offset = $scope.walletItems.length == 0 ? firstLoadOffset : $scope.walletItems.length;
+            var limit  = $scope.walletItems.length == 0 ? firstLoadLimit : 5;
             WalletItem.all(offset, limit, JSON.parse($window.localStorage.user).sfid).success(function(walletItems) {
                 if (walletItems.length != 0) {
-                    $scope.walletItems = $scope.walletItems.concat(walletItems)
+                    $scope.walletItems = $scope.walletItems.concat(walletItems);
                 } else {
                     $scope.noMoreItems = true;
                 }
-                $scope.$broadcast('scroll.infiniteScrollComplete')
+                $scope.$broadcast('scroll.infiniteScrollComplete');
             });
         }
     });

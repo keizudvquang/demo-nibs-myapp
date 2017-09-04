@@ -15,19 +15,28 @@ function addItem(req, res, next) {
 
     console.log('Adding activity: ' + JSON.stringify(activity));
 
-    getPointBalance(userId)
-        .then(function(result) {
-            var balance = (result && result.points) ? result.points : 0;
+    var productOrOfferId = (activity && typeof activity.productId === 'undefined') ? activity.offerId : activity.productId;
 
-            db.query('INSERT INTO salesforce.interaction__c (contact__r__loyaltyid__c, campaign__c, product__c, type__c, points__c, name__c, picture__c) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-                    [userId, activity.offerId, activity.productId, activity.type, activity.points, activity.name, activity.image], true)
-                .then(function() {
-                    res.send({originalBalance: balance, points: activity.points, newBalance: balance + activity.points, originalStatus: getStatus(balance), newStatus: getStatus(balance + activity.points)});
-                })
-                .catch(next);
+    checkExistProductOffer(userId,  productOrOfferId)
+        .then(function(listExist) {
+            if (listExist.length == 0) {
+                getPointBalance(userId)
+                    .then(function(result) {
+                        var balance = (result && result.points) ? result.points : 0;
+                        db.query('INSERT INTO salesforce.interaction__c (contact__r__loyaltyid__c, campaign__c, product__c, type__c, points__c, name__c, picture__c) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+                                [userId, activity.offerId, activity.productId, activity.type, activity.points, activity.name, activity.image], true)
+                            .then(function() {
+                                res.send({originalBalance: balance, points: activity.points, newBalance: balance + activity.points, originalStatus: getStatus(balance), newStatus: getStatus(balance + activity.points)});
+                            })
+                            .catch(next);
+                    })
+                    .catch(next);
+            }
+            else {
+                res.send('Error insert activity: Existing product or offer.'+JSON.stringify(listExist));
+            }
         })
         .catch(next);
-
 }
 
 /**
@@ -101,8 +110,29 @@ function getStatus(points) {
     }
 }
 
+/**
+ * Returns list existing product or offer
+ * @param userId
+ * @param productOrOfferId
+ * @returns {*}
+ */
+function checkExistProductOffer(userId, productOrOfferId) {
+    return db.query('select Id from salesforce.interaction__c where (contact__r__loyaltyid__c=$1 and product__c = $2) or (contact__r__loyaltyid__c=$1 and campaign__c = $2)', [userId, productOrOfferId]);
+}
+
+/**
+ * Delete activity by userId with productId or offerId
+ * @param userId
+ * @param productOrOfferId
+ * @returns {*}
+ */
+function deleteItem(userId, productOrOfferId) {
+    return db.query('DELETE FROM salesforce.interaction__c WHERE (contact__r__loyaltyid__c=$1 and product__c = $2) or (contact__r__loyaltyid__c=$1 and campaign__c = $2)', [userId, productOrOfferId]);
+}
+
 exports.getItems = getItems;
 exports.addItem = addItem;
 exports.getPointBalance = getPointBalance;
 exports.getStatus = getStatus;
 exports.deleteAll = deleteAll;
+exports.deleteItem = deleteItem;

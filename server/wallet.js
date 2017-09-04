@@ -1,5 +1,6 @@
 var db = require('./pghelper'),
-    winston = require('winston');
+    winston = require('winston'),
+    activities = require('./activities');
 var QRCode = require('qrcode')
 /**
  * Add a new offer to the user's wallet
@@ -37,10 +38,23 @@ function addItem(req, res, next) {
  */
 function deleteItem(req, res, next) {
     var userId = req.userId,
-        offerId = req.params.id;
+        offerId = req.params.id,
+        externalUserId = req.externalUserId,
+        offerSFID = req.body.offerSFID,
+        points = req.body.points;
+
     db.query('DELETE FROM wallet WHERE userId=$1 AND offerId=$2', [userId, offerId], true)
         .then(function () {
-            return res.send('OK');
+            activities.getPointBalance(externalUserId)
+                .then(function(result) {
+                    var balance = (result && result.points) ? result.points : 0;
+                    activities.deleteItem(externalUserId, offerSFID)
+                        .then(function () {
+                            return res.send({originalBalance: balance, points: points, newBalance: balance - points, originalStatus: activities.getStatus(balance), newStatus: activities.getStatus(balance - points)});
+                        })
+                        .catch(next);
+                })
+                .catch(next);
         })
         .catch(next);
 }
@@ -67,7 +81,7 @@ function getItems(req, res, next) {
     var userId = req.userId;
     var contactId = req.body.contactId;
 
-    db.query("SELECT id, name, startDate, endDate, description, serialid__c AS serialid, image__c AS image, campaignPage__c AS campaignPage, publishDate__c AS publishDate FROM wallet, salesforce.campaign WHERE offerId = id AND userId=$1 AND type='Offer' AND status='In Progress' AND IsActive = true ORDER BY publishDate DESC, name DESC, id DESC OFFSET $2 LIMIT $3",
+    db.query("SELECT id, sfId, name, startDate, endDate, description, serialid__c AS serialid, image__c AS image, campaignPage__c AS campaignPage, publishDate__c AS publishDate FROM wallet, salesforce.campaign WHERE offerId = id AND userId=$1 AND type='Offer' AND status='In Progress' AND IsActive = true ORDER BY publishDate DESC, name DESC, id DESC OFFSET $2 LIMIT $3",
             [userId, offset, limit])
         .then(function (offers) {
             // Create QR Code

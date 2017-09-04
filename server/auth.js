@@ -5,7 +5,8 @@ var bcrypt = require('bcrypt'),
     Q = require('q'),
     validator = require('validator'),
     winston = require('winston'),
-    invalidCredentials = 'Invalid email or password';
+    invalidCredentials = 'Invalid email or password',
+    activities = require('./activities');
 
 /**
  * Encrypt password with per-user salt
@@ -90,7 +91,13 @@ function login(req, res, next) {
                 if (match) {
                     createAccessToken(user)
                         .then(function(token) {
-                            return res.send({'user':{'sfid': user.sfid, 'email': user.email, 'firstname': user.firstname, 'lastname': user.lastname}, 'token': token});
+                            activities.getPointBalance(user.externaluserid)
+                                .then(function (activity) {
+                                    return res.send({'user':{'sfid': user.sfid, 'email': user.email, 
+                                                    'firstname': user.firstname, 'lastname': user.lastname, 
+                                                    'status': activities.getStatus(activity.points)}, 'token': token});
+                                })
+                                .catch(next);
                         })
                         .catch(function(err) {
                             return next(err);    

@@ -1,4 +1,4 @@
-angular.module('nibs.wishlist', [])
+angular.module('nibs.wishlist', ['nibs.status'])
 
     // Routes
     .config(function ($stateProvider) {
@@ -14,7 +14,6 @@ angular.module('nibs.wishlist', [])
                     }
                 }
             })
-
     })
 
     // Services
@@ -26,35 +25,38 @@ angular.module('nibs.wishlist', [])
             create: function(wishlistItem) {
                 return $http.post($rootScope.server.url + '/wishlist', wishlistItem);
             },
-            del: function(productId) {
-                return $http.delete($rootScope.server.url + '/wishlist/' + productId);
+            del: function(productId, productSFID, points) {
+                return $http.delete($rootScope.server.url + '/wishlist/' + productId, {
+                    data : {productSFID: productSFID, points: points}, headers: {"Content-Type": "application/json;charset=utf-8"}
+                });
             }
         };
     })
 
     // Controllers
-    .controller('WishListCtrl', function ($scope, WishListItem) {
-        const firstLoadOffset = 0
-        const firstLoadLimit  = 10
+    .controller('WishListCtrl', function ($scope, WishListItem, Status) {
+        const firstLoadOffset = 0;
+        const firstLoadLimit  = 10;
 
         $scope.deleteItem = function(product) {
-            WishListItem.del(product.id).success(function() {
-                all();
+            WishListItem.del(product.id, product.sfid, 1000).success(function(dataStatus) {
+                $scope.products.splice($scope.products.indexOf(product), 1);
+                Status.checkStatus(dataStatus);
             });
         };
 
-        $scope.products = []
+        $scope.products = [];
         $scope.noMoreItems = false;
         $scope.loadItem = function() {
-            var offset = $scope.products.length == 0 ? firstLoadOffset : $scope.products.length
-            var limit  = $scope.products.length == 0 ? firstLoadLimit : 5
+            var offset = $scope.products.length == 0 ? firstLoadOffset : $scope.products.length;
+            var limit  = $scope.products.length == 0 ? firstLoadLimit : 5;
             WishListItem.all(offset, limit).success(function(products) {
                 if (products.length != 0) {
-                    $scope.products = $scope.products.concat(products)
+                    $scope.products = $scope.products.concat(products);
                 } else {
                     $scope.noMoreItems = true;
                 }
-                $scope.$broadcast('scroll.infiniteScrollComplete')
+                $scope.$broadcast('scroll.infiniteScrollComplete');
             });
         }
     });
