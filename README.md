@@ -12,3 +12,5 @@
 
 ![Welcome画面](http://res.cloudinary.com/hmsy6tl9w/image/upload/v1504488961/demo-app-welcome_i00l4h.png)
 ![Login画面](http://res.cloudinary.com/hmsy6tl9w/image/upload/v1504488966/demo-app-login_zf7qat.png)
+![SideMenu画面](http://res.cloudinary.com/hmsy6tl9w/image/upload/v1504490497/demo-app-sidemenu_qluzuo.png)
+
