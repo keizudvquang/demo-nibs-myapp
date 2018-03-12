@@ -101,14 +101,13 @@ angular.module('nibs.profile', ['nibs.s3uploader', 'nibs.config', 'nibs.status']
 
     })
 
-    .controller('EditProfileCtrl', function ($scope, $window, $ionicPopup, S3Uploader, User, Preference, Size, Status) {
+    .controller('EditProfileCtrl', function ($scope, $state, $window, $ionicPopup, S3Uploader, User, Preference, Size, Status) {
 
         User.get().success(function(user) {
             $scope.user = user;
         });
         $scope.preferences = Preference.all();
         $scope.sizes = Size.all();
-
         $scope.panel = 1;
 
         $scope.update = function () {
@@ -117,41 +116,40 @@ angular.module('nibs.profile', ['nibs.s3uploader', 'nibs.config', 'nibs.status']
             })
         };
 
-        $scope.addPicture = function (from) {
+        function errBack() {
+            $ionicPopup.alert({title: 'Sorry', content: "Something went wrong!"});
+        }
 
-            if (!navigator.camera) {
-                $ionicPopup.alert({title: 'Sorry', content: 'This device does not support Camera'});
-                return;
-            }
+        var videoWidth = 0
+        var videoHeight = 0
+        var video = document.getElementById('video');
 
-            var fileName,
-                options = {   quality: 45,
-                    allowEdit: true,
-                    targetWidth: 300,
-                    targetHeight: 300,
-                    destinationType: Camera.DestinationType.FILE_URI,
-                    encodingType: Camera.EncodingType.JPEG };
-            if (from === "LIBRARY") {
-                options.sourceType = Camera.PictureSourceType.PHOTOLIBRARY;
-                options.saveToPhotoAlbum = false;
-            } else {
-                options.sourceType = Camera.PictureSourceType.CAMERA;
-                options.saveToPhotoAlbum = true;
-            }
+        // Get camera size
+        video.onloadedmetadata = function(){
+            videoWidth = this.videoWidth
+            videoHeight = this.videoHeight
+        }
 
-            navigator.camera.getPicture(
-                function (imageURI) {
-                    // without setTimeout(), the code below seems to be executed twice.
-                    setTimeout(function () {
-                        fileName = new Date().getTime() + ".jpg";
-                        S3Uploader.upload(imageURI, fileName).then(function () {
-                            $scope.user.pictureurl = 'https://s3-us-west-1.amazonaws.com/sfdc-demo/' + fileName;
-                        });
-                    });
-                },
-                function (message) {
-                    // We typically get here because the use canceled the photo operation. Seems better to fail silently.
-                }, options);
-            return false;
+        // Get access to the camera!
+        if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            var constraints = {video: { facingMode: "user"}, audio: false} // user front camera
+            navigator.mediaDevices.getUserMedia(constraints)
+            .then(function(stream) {
+                video.src = window.URL.createObjectURL(stream);
+                video.play();
+            }, errBack);
+        }
+
+        // Trigger photo take
+        $scope.takePicture = function() {
+            // Elements for taking the snapshot
+            var video = document.getElementById('video');
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, videoWidth, videoHeight);
+
+            var canvas = document.getElementById('canvas');
+            var img = canvas.toDataURL('image/jpeg')
+            $state.go("app.preview", {img: img, isUpdateAvatar: true});
         };
     });

@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS wishlist (
 
 CREATE TABLE IF NOT EXISTS picture (
     id           BIGSERIAL,
+    public_id    TEXT,
     userId       BIGINT,
     url          TEXT,
     publishDate  timestamp default current_timestamp
