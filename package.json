@@ -27,7 +27,7 @@
     "cookie-session": "~1.0.2",
     "cors": "^2.8.4",
     "csurf": "^1.9.0",
-    "ejs": "~1.0.0",
+    "ejs": "~2.5.5",
     "express": "~4.4.1",
     "logfmt": "~0.21.0",
     "method-override": "~2.0.1",
