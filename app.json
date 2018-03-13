@@ -4,7 +4,9 @@
     "logo": "https://www.keizu.co.jp/wp-content/themes/kz/images/logo.png",
     "addons": [
         "heroku-postgresql:hobby-dev",
-        "herokuconnect:demo"
+        "herokuconnect:demo",
+        "cloudinary:starter",
+        "scheduler:standard"
     ],
     "env": {
         "INTEGRATION_USER_NAME": {
