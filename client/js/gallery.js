@@ -6,7 +6,7 @@ angular.module('nibs.gallery', [])
         $stateProvider
 
             .state('app.gallery', {
-                url: "/gallery",
+                url: "/gallery/:isUpdateAvatar",
                 views: {
                     'menuContent' :{
                         templateUrl: "templates/gallery.html",
@@ -42,23 +42,41 @@ angular.module('nibs.gallery', [])
     })
 
     //Controllers
-    .controller('GalleryCtrl', function ($scope, $rootScope, $state, $window, $ionicPopup, Picture, S3Uploader) {
+    .controller('GalleryCtrl', function ($scope, $rootScope, $state, $stateParams, $window, $ionicPopup, Picture, S3Uploader, $ionicViewService) {
         var isCameraReady = false
         var videoWidth = 0
         var videoHeight = 0
+        $scope.isCheckPhoto = false;
+        $scope.isSelectedPhoto = false;
+        $scope.isGallery = true;
+        var isProfile = $stateParams.isUpdateAvatar;
+
+        $ionicViewService.nextViewOptions({
+           disableBack: true
+        });
 
         function getPictures() {
             Picture.all().success(function(pictures) {
                 $scope.pictures = pictures;
             });
         }
-        getPictures()
 
+        if (isProfile == 'true'){
+            $scope.isGallery = false;
+            activeCamera();
+        }else{
+            getPictures();
+        }
+        
         document.getElementById('btnCamera').addEventListener('click', function() {
-            if (!isCameraReady) {
-                activeCamera()
-            } else {
-                takePicture()
+            if ($scope.isSelectedPhoto == true){
+                deletePicture();
+            }else{
+                if (!isCameraReady) {
+                    activeCamera()
+                } else {
+                    takePicture()
+                }
             }
         })
 
@@ -125,13 +143,27 @@ angular.module('nibs.gallery', [])
 
             var canvas = document.getElementById('canvas');
             var img = canvas.toDataURL('image/jpeg')
-            $state.go("app.preview", {img: img, isUpdateAvatar: false});
+            if (isProfile == 'true'){
+                $state.go("app.preview", {img: img, isUpdateAvatar: true});
+            }else{
+                $state.go("app.preview", {img: img, isUpdateAvatar: false});
+            }
         };
 
         $scope.showCheckbox = function() {
+            var displayType = "";
+            if ($scope.isCheckPhoto == true){
+                $scope.isCheckPhoto = false;
+                $scope.isSelectedPhoto = false;
+                displayType = "none";
+            }else{
+                $scope.isCheckPhoto = true;
+                displayType = "inline-block";
+            }
+            
             var imgCheckboxs = document.getElementsByClassName('imgCheckbox')
             for(let i of imgCheckboxs) {
-                i.style.display = 'inline-block'
+                i.style.display = displayType;
             }
         }
 
@@ -139,14 +171,16 @@ angular.module('nibs.gallery', [])
             var imgCheckboxs = document.getElementsByClassName('imgCheckbox')
             for(let i of imgCheckboxs) {
                 if (i.checked) {
-                    document.getElementById('btnDeletePicture').removeAttribute('disabled')
+                    // document.getElementById('btnDeletePicture').removeAttribute('disabled')
+                    $scope.isSelectedPhoto = true;
                     return;
                 }
             }
-            document.getElementById('btnDeletePicture').setAttribute('disabled', 'disabled')
+            $scope.isSelectedPhoto = false;
+            // document.getElementById('btnDeletePicture').setAttribute('disabled', 'disabled')
         }
 
-        $scope.deletePicture = function() {
+        function deletePicture() {
             var confirm = $window.confirm('Are you sure?')
             if (confirm) {
                 var imgCheckboxs = document.getElementsByClassName('imgCheckbox')
@@ -162,6 +196,8 @@ angular.module('nibs.gallery', [])
                         })
                     }
                 }
+                $scope.isSelectedPhoto = false;
+                $scope.isCheckPhoto = false;
             }
         }
     });

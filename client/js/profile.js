@@ -73,8 +73,10 @@ angular.module('nibs.profile', ['nibs.s3uploader', 'nibs.config', 'nibs.status']
     })
 
     //Controllers
-    .controller('ProfileCtrl', function ($window, $rootScope, $scope, $state, User, STATUS_LABELS, STATUS_DESCRIPTIONS) {
-
+    .controller('ProfileCtrl', function ($window, $rootScope, $scope, $state, $ionicViewService, User, STATUS_LABELS, STATUS_DESCRIPTIONS) {
+        $ionicViewService.nextViewOptions({
+           disableBack: true
+        });
         User.get().success(function(user) {
             $rootScope.user = user;
             $scope.statusLabel = STATUS_LABELS[user.status - 1];
@@ -120,36 +122,8 @@ angular.module('nibs.profile', ['nibs.s3uploader', 'nibs.config', 'nibs.status']
             $ionicPopup.alert({title: 'Sorry', content: "Something went wrong!"});
         }
 
-        var videoWidth = 0
-        var videoHeight = 0
-        var video = document.getElementById('video');
-
-        // Get camera size
-        video.onloadedmetadata = function(){
-            videoWidth = this.videoWidth
-            videoHeight = this.videoHeight
-        }
-
-        // Get access to the camera!
-        if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            var constraints = {video: { facingMode: "user"}, audio: false} // user front camera
-            navigator.mediaDevices.getUserMedia(constraints)
-            .then(function(stream) {
-                video.src = window.URL.createObjectURL(stream);
-                video.play();
-            }, errBack);
-        }
-
         // Trigger photo take
         $scope.takePicture = function() {
-            // Elements for taking the snapshot
-            var video = document.getElementById('video');
-            var canvas = document.getElementById('canvas');
-            var context = canvas.getContext('2d');
-            context.drawImage(video, 0, 0, videoWidth, videoHeight);
-
-            var canvas = document.getElementById('canvas');
-            var img = canvas.toDataURL('image/jpeg')
-            $state.go("app.preview", {img: img, isUpdateAvatar: true});
+            $state.go("app.gallery", {isUpdateAvatar: true});
         };
     });

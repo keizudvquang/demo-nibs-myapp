@@ -1,5 +1,9 @@
 <ion-view title="プロファイルの編集" class="card-bg">
 
+    <ion-nav-buttons side="left">
+        <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+    </ion-nav-buttons>
+
     <ion-nav-buttons side="right">
         <button class="button button-clear" ng-click="update()">保存</button>
     </ion-nav-buttons>
@@ -12,8 +16,6 @@
                 <a class="button button-small" ng-click="panel=2">初期設定</a>
             </div>
         </div>
-        <video id="video" width="640" height="480" style="display: none" autoplay></video>
-        <canvas id="canvas" width="640" height="480" style="display: none"></canvas>
         <div ng-if="panel===1">
             <div class="padding">
                 <img class="profile-pic light-border" ng-src="{{user.pictureurl}}" style="float: left;margin-right:8px;margin-bottom:8px;"/>

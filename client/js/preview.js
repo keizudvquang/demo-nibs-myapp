@@ -18,10 +18,18 @@ angular.module('nibs.preview', ['nibs.profile', 'nibs.gallery'])
     })
 
     //Controllers
-    .controller('PreviewCtrl', function ($scope, $rootScope, $state, $stateParams, $window, $ionicPopup, Picture, User) {
+    .controller('PreviewCtrl', function ($scope, $rootScope, $state, $stateParams, $window, $ionicPopup, $ionicViewService, Picture, User) {
         document.getElementById('preview_img').src = $stateParams.img
+        var isProfile = $stateParams.isUpdateAvatar;
+        $ionicViewService.nextViewOptions({
+           disableBack: true
+        });
         $scope.back = function() {
-            $state.go("app.gallery")
+            if (isProfile == 'true'){
+                $state.go("app.edit-profile");
+            }else{
+                $state.go("app.gallery");
+            }
         }
 
         $scope.upload = function() {
