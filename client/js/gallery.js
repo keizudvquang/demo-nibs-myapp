@@ -89,8 +89,8 @@ angular.module('nibs.gallery', [])
                 document.getElementById('video-frame').style.display = 'block'
                 document.getElementById('video').setAttribute('width', windowWidth)
                 document.getElementById('video').setAttribute('height', windowHeight)
-                document.getElementById('canvas').setAttribute('width', windowWidth)
-                document.getElementById('canvas').setAttribute('height', windowHeight)
+                document.getElementById('canvas').setAttribute('width', this.videoWidth)
+                document.getElementById('canvas').setAttribute('height', this.videoHeight)
                 videoWidth = this.videoWidth
                 videoHeight = this.videoHeight
             }

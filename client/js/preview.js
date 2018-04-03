@@ -29,7 +29,6 @@ angular.module('nibs.preview', ['nibs.profile', 'nibs.gallery'])
 
         function detectImageSize(){
             var img = document.getElementById('preview_img');
-            var foot = document.getElementById('footer');
             if (windowWidth < windowHeight){
                 img.width = windowWidth;
             }else{
