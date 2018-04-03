@@ -57,6 +57,16 @@ angular.module('nibs.preview', ['nibs.profile', 'nibs.gallery'])
                     if ($stateParams.isUpdateAvatar == 'true') {
                         User.get()
                         .success(function(data) {
+                            var strOldUrl = data.pictureurl;
+                            if (strOldUrl != ''){
+                                // Delete old avatar picture
+                                var startIdIndex = strOldUrl.lastIndexOf('/') + 1;
+                                var endIdIndex = strOldUrl.lastIndexOf('.');
+                                public_id = strOldUrl.substring(startIdIndex, endIdIndex);
+                                if (public_id != ''){
+                                    Picture.delete(public_id);
+                                }
+                            }
                             data.pictureurl = secure_url
                             User.update(data)
                             .success(function(data) {
