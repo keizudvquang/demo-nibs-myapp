@@ -128,7 +128,8 @@ angular.module('nibs.gallery', [])
                     video.src = window.URL.createObjectURL(stream);
                     video.play();
                 }, function(err) {
-                    $ionicPopup.alert({title: 'Sorry', content: "カメラが利用できません"});
+                    $ionicPopup.alert({title: 'Sorry', content: err});
+                    // $ionicPopup.alert({title: 'Sorry', content: "カメラが利用できません"});
                 });
             }
         }
