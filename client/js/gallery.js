@@ -91,8 +91,8 @@ angular.module('nibs.gallery', [])
                 document.getElementById('video').setAttribute('height', windowHeight)
                 document.getElementById('canvas').setAttribute('width', windowWidth)
                 document.getElementById('canvas').setAttribute('height', windowHeight)
-                videoWidth = windowWidth
-                videoHeight = windowHeight
+                videoWidth = this.videoWidth
+                videoHeight = this.videoHeight
             }
 
             // Older browsers might not implement mediaDevices at all, so we set an empty object first
