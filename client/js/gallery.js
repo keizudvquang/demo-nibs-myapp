@@ -50,8 +50,7 @@ angular.module('nibs.gallery', [])
         $scope.isSelectedPhoto = false;
         $scope.isGallery = true;
         var isProfile = $stateParams.isUpdateAvatar;
-        var windowHeight = window.innerHeight - 100;
-        var windowWidth = window.innerWidth;
+        
         $ionicViewService.nextViewOptions({
            disableBack: true
         });
@@ -84,6 +83,8 @@ angular.module('nibs.gallery', [])
         function activeCamera() {
             // Get camera size
             var video = document.getElementById('video');
+            var windowHeight = window.innerHeight - 100;
+            var windowWidth = window.innerWidth;
             video.onloadedmetadata = function(){
                 isCameraReady = true
                 document.getElementById('video-frame').style.display = 'block'
