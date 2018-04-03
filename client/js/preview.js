@@ -32,7 +32,7 @@ angular.module('nibs.preview', ['nibs.profile', 'nibs.gallery'])
             if (windowWidth < windowHeight){
                 img.width = windowWidth;
             }else{
-                img.height = windowHeight - 100;
+                img.height = windowHeight - 90;
             }
         }
         detectImageSize();
