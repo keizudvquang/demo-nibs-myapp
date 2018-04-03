@@ -86,11 +86,11 @@ angular.module('nibs.gallery', [])
             video.onloadedmetadata = function(){
                 isCameraReady = true
                 document.getElementById('video-frame').style.display = 'block'
-                document.getElementById('video').setAttribute('width', this.videoWidth - 100)
+                document.getElementById('video').setAttribute('width', this.videoWidth)
                 document.getElementById('video').setAttribute('height', this.videoHeight)
-                document.getElementById('canvas').setAttribute('width', this.videoWidth - 100)
+                document.getElementById('canvas').setAttribute('width', this.videoWidth)
                 document.getElementById('canvas').setAttribute('height', this.videoHeight)
-                videoWidth = this.videoWidth - 100
+                videoWidth = this.videoWidth
                 videoHeight = this.videoHeight
             }
 
