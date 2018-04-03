@@ -50,6 +50,8 @@ angular.module('nibs.gallery', [])
         $scope.isSelectedPhoto = false;
         $scope.isGallery = true;
         var isProfile = $stateParams.isUpdateAvatar;
+        var windowHeight = window.innerHeight - 100;
+        var windowWidth = window.innerWidth;
 
         $ionicViewService.nextViewOptions({
            disableBack: true
@@ -86,12 +88,12 @@ angular.module('nibs.gallery', [])
             video.onloadedmetadata = function(){
                 isCameraReady = true
                 document.getElementById('video-frame').style.display = 'block'
-                document.getElementById('video').setAttribute('width', this.videoWidth)
-                document.getElementById('video').setAttribute('height', this.videoHeight)
-                document.getElementById('canvas').setAttribute('width', this.videoWidth)
-                document.getElementById('canvas').setAttribute('height', this.videoHeight)
-                videoWidth = this.videoWidth
-                videoHeight = this.videoHeight
+                document.getElementById('video').setAttribute('width', windowWidth)
+                document.getElementById('video').setAttribute('height', windowHeight)
+                document.getElementById('canvas').setAttribute('width', windowWidth)
+                document.getElementById('canvas').setAttribute('height', windowHeight)
+                videoWidth = windowWidth
+                videoHeight = windowHeight
             }
 
             // Older browsers might not implement mediaDevices at all, so we set an empty object first
