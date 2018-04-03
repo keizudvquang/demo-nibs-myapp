@@ -121,8 +121,12 @@ angular.module('nibs.gallery', [])
               }
             }
             // Get access to the camera!
+            var cameraMode = "environment"; // use back camera
+            if (isProfile == 'true'){
+                cameraMode = 'user'; // user front camera
+            }
             if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                var constraints = {video: { facingMode: "environment"}, audio: false} // use back camera
+                var constraints = {video: { facingMode: cameraMode}, audio: false} 
                 navigator.mediaDevices.getUserMedia(constraints)
                 .then(function(stream) {
                     video.src = window.URL.createObjectURL(stream);
