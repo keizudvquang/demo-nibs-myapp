@@ -65,6 +65,10 @@ angular.module('nibs.gallery', [])
         if (isProfile == 'true'){
             $scope.isGallery = false;
             cameraMode = 'user'; // user front camera
+            // flip camera
+            var videoUi = angular.element(document.querySelector('#video'));
+            videoUi.css('-webkit-transform','scaleX(-1)'); 
+            videoUi.css('transform','scaleX(-1)');
             activeCamera();
         }else{
             getPictures();
@@ -143,8 +147,14 @@ angular.module('nibs.gallery', [])
             var video = document.getElementById('video');
             var canvas = document.getElementById('canvas');
             var context = canvas.getContext('2d');
-            context.drawImage(video, 0, 0, videoWidth, videoHeight);
-
+            if (isProfile == 'true'){
+                // flip image
+                context.save();
+                context.scale(-1, 1);
+                context.drawImage(video, videoWidth * -1, 0, videoWidth, videoHeight);
+            }else{
+                context.drawImage(video, 0, 0, videoWidth, videoHeight);
+            }
             var canvas = document.getElementById('canvas');
             var img = canvas.toDataURL('image/jpeg')
             if (isProfile == 'true'){
