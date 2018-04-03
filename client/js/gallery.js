@@ -50,6 +50,7 @@ angular.module('nibs.gallery', [])
         $scope.isSelectedPhoto = false;
         $scope.isGallery = true;
         var isProfile = $stateParams.isUpdateAvatar;
+        var cameraMode = "environment"; // use back camera
         
         $ionicViewService.nextViewOptions({
            disableBack: true
@@ -63,6 +64,7 @@ angular.module('nibs.gallery', [])
 
         if (isProfile == 'true'){
             $scope.isGallery = false;
+            cameraMode = 'user'; // user front camera
             activeCamera();
         }else{
             getPictures();
@@ -123,10 +125,6 @@ angular.module('nibs.gallery', [])
               }
             }
             // Get access to the camera!
-            var cameraMode = "environment"; // use back camera
-            if (isProfile == 'true'){
-                cameraMode = 'user'; // user front camera
-            }
             if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 var constraints = {video: { facingMode: cameraMode}, audio: false} 
                 navigator.mediaDevices.getUserMedia(constraints)
