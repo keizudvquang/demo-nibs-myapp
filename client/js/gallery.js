@@ -83,7 +83,7 @@ angular.module('nibs.gallery', [])
         function activeCamera() {
             // Get camera size
             var video = document.getElementById('video');
-            var windowHeight = window.innerHeight - 100;
+            var windowHeight = window.innerHeight - 105;
             var windowWidth = window.innerWidth;
             video.onloadedmetadata = function(){
                 isCameraReady = true
