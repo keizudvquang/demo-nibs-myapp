@@ -171,13 +171,11 @@ angular.module('nibs.gallery', [])
             var imgCheckboxs = document.getElementsByClassName('imgCheckbox')
             for(let i of imgCheckboxs) {
                 if (i.checked) {
-                    // document.getElementById('btnDeletePicture').removeAttribute('disabled')
                     $scope.isSelectedPhoto = true;
                     return;
                 }
             }
             $scope.isSelectedPhoto = false;
-            // document.getElementById('btnDeletePicture').setAttribute('disabled', 'disabled')
         }
 
         function deletePicture() {

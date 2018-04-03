@@ -24,6 +24,20 @@ angular.module('nibs.preview', ['nibs.profile', 'nibs.gallery'])
         $ionicViewService.nextViewOptions({
            disableBack: true
         });
+        var windowHeight = window.innerHeight;
+        var windowWidth = window.innerWidth;
+
+        function detectImageSize(){
+            var img = document.getElementById('preview_img');
+            var foot = document.getElementById('footer');
+            if (windowWidth < windowHeight){
+                img.width = windowWidth
+            }else{
+                img.height = windowHeight - 100;
+            }
+        }
+        detectImageSize();
+
         $scope.back = function() {
             if (isProfile == 'true'){
                 $state.go("app.edit-profile");
