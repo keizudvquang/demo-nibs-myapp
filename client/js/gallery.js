@@ -87,11 +87,11 @@ angular.module('nibs.gallery', [])
                 isCameraReady = true
                 document.getElementById('video-frame').style.display = 'block'
                 document.getElementById('video').setAttribute('width', this.videoWidth)
-                document.getElementById('video').setAttribute('height', this.videoHeight)
+                document.getElementById('video').setAttribute('height', this.videoHeight - 100)
                 document.getElementById('canvas').setAttribute('width', this.videoWidth)
-                document.getElementById('canvas').setAttribute('height', this.videoHeight)
+                document.getElementById('canvas').setAttribute('height', this.videoHeight - 100)
                 videoWidth = this.videoWidth
-                videoHeight = this.videoHeight
+                videoHeight = this.videoHeight - 100;
             }
 
             // Older browsers might not implement mediaDevices at all, so we set an empty object first
